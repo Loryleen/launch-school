@@ -1,0 +1,9 @@
+# Q : An array containing different types of colors is assigned to colors.
+#   : Use Array#each to iterate over colors and print each element.
+
+
+colors = ['red', 'yellow', 'purple', 'green']
+
+colors.each do |color| 
+  puts "I'm the color #{color}!"
+end
