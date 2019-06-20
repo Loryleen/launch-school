@@ -8,7 +8,8 @@ The two major areas we encounter local variable scoping rules are:
 
 
 ## VARIABLES AND BLOCKS
-We've already been using Ruby blocks when we type `do..end` or `{..}` follwing a method invocation. 
+Method invocation followed by `{...}` or `do..end` defines a block. <br>
+The block is part of the method invocation.  
 
 ```ruby
 [1, 2, 3].each do |num|
@@ -261,3 +262,141 @@ puts MY_TEAM    # => Phoenix Suns
 ```
 
 This is different from local variables!
+
+
+
+# MORE VARIABLE SCOPE
+Goals:
+1. Build on the definitions previously outlined.
+2. Provide a more complex and more accurate mental model of methods, blocks, how they inter-relate, and how local variable scope fits into the picture. 
+
+Two key terms of building this mental model are: `method definition` and `method invocation`. 
+
+
+
+## METHOD DEFINITION
+Method definition is when, within our code, we define a Ruby method using the `def` keyword.
+
+```ruby
+def greeting
+  puts "Hello"
+end
+```
+
+
+## METHOD INVOCATION
+Method invocation is when we call a method from the Ruby library or a custom method we've defined using the `def` keyword.
+
+```ruby
+greeting    # Calling the greeting method outputs "Hello"
+```
+
+There are also methods being called with blocks:
+
+```ruby
+[1, 2, 3].each { |num| puts num }
+```
+
+Technically any method can be called with a block, but the block is only executed if the method is defined in a particular way. (Note: This will be covered in a later course).
+
+At this point, we want to be clear that a block is part of the method invocation. <br>
+In fact, method invocation followed by `{..}` or `do...end` is the way in whch we define a block in Ruby.
+
+Essentially the block acts as an argument to the method.
+In the same way that a local variable can be passed as an argument to a method at invocation, when a method is called with a block it acts as an argument to that method.
+
+The way that an argument is used, whether it is a method parameter or a block, depends on how the method is defined.
+
+
+
+### METHOD PARAMETER NOT USED
+```ruby
+def greetings(str)
+  puts "Goodbye"
+end
+
+word = "Hello"
+
+greetings(word)
+
+# Outputs "Goodbye"
+```
+
+
+### METHOD PARAMETER USED
+```ruby
+def greetings(str)
+  puts str
+  puts "Goodbye"
+end
+
+word = "Hello"
+
+greetings(word)
+
+# Outputs "Hello"
+# Outputs "Goodbye"
+```
+
+The greetings method has a parameter `str`. <br>
+This allows the method to access the "Hello" value of the local variable `word` when we <br>
+pass it as an argument at method invocation. <br>
+The method outputs word.
+
+
+
+### BLOCK NOT EXECUTED
+We are very familiar with having a method access a local variable in the outer scope by passing it as an argument and holding that value through a method parameter. 
+
+We are NOT familiar with how methods interact with blocks at invocation.
+
+```ruby
+def greetings
+  puts "Goodbye"
+end
+
+word = "Hello"
+
+greetings do
+  puts word
+end
+
+# Outputs "Goodbye"
+```
+
+
+### BLOCK EXECUTED
+Blocks and methods can interact with each other. <br>
+The level of that interaction is set by the method definition and then used at method invocation. 
+
+When invoking a method with a block, we aren't just limited to executing code within the block. <br>
+Depending on the method definition, the method can use the return value of the block to perform some other action. 
+
+```ruby
+a = "hello"
+
+[1, 2, 3].map {|num| a }    # => ["hello", "hello", "hello"]
+```
+
+The Array#map method is defined in such a way that it uses the return value of the block to <br> 
+perform transformation on each element in an array. <br>
+`#map` doesn't have access to `a` but it can use the value of `a` to perform transformation on <br>
+the array since the block can access `a` and returns it to `#map`.
+
+
+
+### REVIEW
+Method definitions cannot directly access local variables initialized outside of the method definition, <br>
+nor can local variables initialized outside of the method definition be reassigned from within it.
+
+A block can access local variables initialized outside of the block and can reassign those variables. 
+
+Methods can access local variables passed in as arguments. <br>
+We've also seen that methods can access local variables through interaction with blocks. 
+
+Method definition sets a certain scope for local variables in terms of parameters and <br>
+how it interacts (if at all) with a block. 
+
+Method invocation is using the scope set by the method definition. <br>
+If the method is defined as a block, then the scope of the block can provide <br>
+additional flexibility in terms of how the method invocation interacts with its surroundings. 
